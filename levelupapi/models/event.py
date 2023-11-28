@@ -11,11 +11,4 @@ class Event(models.Model):
     time = models.TimeField()
     organizer = models.ForeignKey(Gamer, on_delete=models.CASCADE, related_name='user_event')
 
-    # @property
-    # def joined(self):
-    #     """Join"""
-    #     return self.__joined
-
-    # @joined.setter
-    # def joined(self, value):
-    #     self.__joined = value
+    objects = models.Manager()
