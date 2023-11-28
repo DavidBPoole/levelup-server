@@ -1,16 +1,16 @@
 """View module for handling requests about game views"""
-from django.http import HttpResponseServerError
+# from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from levelupapi.models import Game, Gamer, GameType, Event
+from levelupapi.models import Game, Gamer, GameType
 
 class GameView(ViewSet):
     """Level up game views"""
 
     def retrieve(self, request, pk):
         """Handle GET requests for single game
-        
+
         Returns:
             Response -- JSON serialized game
         """
@@ -27,7 +27,7 @@ class GameView(ViewSet):
         Returns:
             Response -- JSON serialized list of games
         """
-        # try:
+
         games = Game.objects.all()
         game_type = request.query_params.get('type', None)
         if game_type is not None:
@@ -99,7 +99,8 @@ class GameView(ViewSet):
 class CreateGameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
-        fields = ['id', 'title', 'maker', 'number_of_players', 'skill_level', 'game_type', 'gamer']
+        fields = ['id', 'title', 'maker', 'number_of_players',
+                  'skill_level', 'game_type', 'gamer']
 
 class GameSerializer(serializers.ModelSerializer):
     """JSON serializer for games

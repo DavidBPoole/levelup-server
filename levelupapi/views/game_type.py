@@ -10,7 +10,7 @@ class GameTypeView(ViewSet):
 
     def retrieve(self, request, pk):
         """Handle GET requests for single game type
-        
+
         Returns:
             Response -- JSON serialized game type
         """
@@ -28,7 +28,8 @@ class GameTypeView(ViewSet):
             Response -- JSON serialized list of game types
         """
         game_types = GameType.objects.all()
-        serializer = GameTypeSerializer(game_types, many=True)
+        serializer = GameTypeSerializer(
+            game_types, many=True, context={'request': request})
         return Response(serializer.data)
 
 class GameTypeSerializer(serializers.ModelSerializer):

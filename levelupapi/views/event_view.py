@@ -1,16 +1,16 @@
 """View module for handling requests about game types"""
-from django.http import HttpResponseServerError
+# from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from levelupapi.models import Event, Game, Gamer, GameType
+from levelupapi.models import Event, Game, Gamer
 
 class EventView(ViewSet):
     """Level up game events view"""
 
     def retrieve(self, request, pk):
         """Handle GET requests for a single event
-        
+
         Returns:
             Response -- JSON serialized event
         """
@@ -18,7 +18,7 @@ class EventView(ViewSet):
             event = Event.objects.get(pk=pk)
             serializer = EventSerializer(event)
             return Response(serializer.data)
-        except Event.DoesNotExist as ex:
+        except Exception as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
     def list(self, request):
