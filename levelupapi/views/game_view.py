@@ -44,14 +44,14 @@ class GameView(ViewSet):
         try:
             # Retrieve data from request.data
             user_id = request.data.get("gamer")
-            game_type_id = request.data.get("game_type")
+            game_type_id = request.data.get("gameType")
 
             # Creates Game data dictionary
             game_data = {
                 "title": request.data.get("title"),
                 "maker": request.data.get("maker"),
-                "number_of_players": request.data.get("number_of_players"),
-                "skill_level": request.data.get("skill_level"),
+                "number_of_players": request.data.get("numberOfPlayers"),
+                "skill_level": request.data.get("skillLevel"),
             }
 
             # Get or create Gamer and GameType instances
