@@ -75,26 +75,64 @@ class EventView(ViewSet):
     #     except Exception as ex:
     #         return Response({'message': str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    # def create(self, request):
+    #     """Handles POST operations"""
+    #     try:
+
+    #         request_data_dict = request.data[0]
+
+    #         game = Game.objects.get(pk=request_data_dict["game"])
+    #         organizer = Gamer.objects.get(uid=request_data_dict["userId"])
+
+    #         event = Event.objects.create(
+    #             description=request_data_dict["description"],
+    #             date=request_data_dict["date"],
+    #             time=request_data_dict["time"],
+    #             game=game,
+    #             organizer=organizer
+    #         )
+    #         serializer = EventSerializer(event)
+    #         return Response(serializer.data)
+    #     except Exception as ex:
+    #         return Response({'message': str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # create event final - allison
+    # def create(self, request):
+    #     """Handle POST operations
+        
+    #     Returns -- JSON serialized event instance"""
+
+    #     game = Game.objects.get(pk=request.data["gameId"])
+    #     organizer = Gamer.objects.get(uid=request.META['HTTP_AUTHORIZATION'])
+
+    #     event = Event.objects.create(
+    #         description=request.data["description"],
+    #         date=request.data["date"],
+    #         time=request.data["time"],
+    #         organizer=organizer,
+    #         game=game,
+    #     )
+    #     serializer = EventSerializer(event)
+    #     return Response(serializer.data)
+
     def create(self, request):
-        """Handles POST operations"""
-        try:
+        """Handle POST operations
 
-            request_data_dict = request.data[0]
+        Returns
+            Response -- JSON serialized event instance
+        """
+        game = Game.objects.get(pk=request.data["game"])
+        gamer = Gamer.objects.get(uid=request.data["organizer"])
 
-            game = Game.objects.get(pk=request_data_dict["game"])
-            organizer = Gamer.objects.get(uid=request_data_dict["userId"])
-
-            event = Event.objects.create(
-                description=request_data_dict["description"],
-                date=request_data_dict["date"],
-                time=request_data_dict["time"],
-                game=game,
-                organizer=organizer
-            )
-            serializer = EventSerializer(event)
-            return Response(serializer.data)
-        except Exception as ex:
-            return Response({'message': str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        event = Event.objects.create(
+            description=request.data["description"],
+            date=request.data["date"],
+            time=request.data["time"],
+            game=game,
+            organizer=gamer,
+        )
+        serializer = EventSerializer(event)
+        return Response(serializer.data)
 
     def update(self, request, pk):
         """Handle PUT requests for an event
