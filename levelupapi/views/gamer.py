@@ -1,5 +1,5 @@
 """View module for handling requests about game types"""
-# from django.http import HttpResponseServerError
+from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
@@ -10,7 +10,7 @@ class GamerView(ViewSet):
 
     def retrieve(self, request, pk):
         """Handle GET requests for a single gamer
-        
+
         Returns:
             Response -- JSON serialized gamer
         """
@@ -27,7 +27,7 @@ class GamerView(ViewSet):
         Returns:
             Response -- JSON serialized list of gamers
         """
-        # try:
+
         gamers = Gamer.objects.all()
         serializer = GamerSerializer(gamers, many=True)
         return Response(serializer.data)
@@ -37,5 +37,5 @@ class GamerSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Gamer
-        fields = ('id', 'bio', 'uid')
+        fields = ('id', 'uid', 'bio')
         depth = 1

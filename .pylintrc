@@ -7,11 +7,28 @@
 ; [MASTER]
 ;   disable=C0114,
 
-[FORMAT]
-good-names=i,j,ex,pk
+; version 2
+; [FORMAT]
+; good-names=i,j,ex,pk
+
+; [MESSAGES CONTROL]
+; disable=no-self-use,broad-except,missing-class-docstring
+
+; [MASTER]
+; disable=C0114
+
+; alternate code 2:
+[FORMAT] 
+  good-names=i,j,ex,pk
 
 [MESSAGES CONTROL]
-disable=no-self-use,broad-except,missing-class-docstring
+  disable=broad-except,imported-auth-user,missing-class-docstring,no-self-use,abstract-method
 
 [MASTER]
-disable=C0114
+  disable=C0114,
+
+load-plugins=pylint_django
+
+disable=all
+
+enable=F,E,unreachable,duplicate-key,unnecessary-semicolon,global-variable-not-assigned,unused-variable,binary-op-exception,bad-format-string,anomalous-backslash-in-string,bad-open-mode

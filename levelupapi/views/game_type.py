@@ -1,9 +1,10 @@
 """View module for handling requests about game types"""
-# from django.http import HttpResponseServerError
+from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from levelupapi.models import GameType
+
 
 class GameTypeView(ViewSet):
     """Level up game types view"""
@@ -21,15 +22,16 @@ class GameTypeView(ViewSet):
         except GameType.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
+
     def list(self, request):
         """Handle GET requests to get all game types
 
         Returns:
             Response -- JSON serialized list of game types
         """
+
         game_types = GameType.objects.all()
-        serializer = GameTypeSerializer(
-            game_types, many=True, context={'request': request})
+        serializer = GameTypeSerializer(game_types, many=True)
         return Response(serializer.data)
 
 class GameTypeSerializer(serializers.ModelSerializer):
@@ -38,4 +40,3 @@ class GameTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameType
         fields = ('id', 'label')
-        depth = 1
