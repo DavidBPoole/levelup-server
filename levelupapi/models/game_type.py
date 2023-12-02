@@ -1,20 +1,3 @@
-# from django.db import models
-
-# class GameType(models.Model):
-
-#     label = models.CharField(max_length=50)
-
-#     objects = models.Manager()
-
-# alternate code:
-# from django.db import models
-
-
-# class GameType(models.Model):
-
-#     label = models.CharField(max_length=50)
-
-# alternate code 2:
 from django.db import models
 
 
