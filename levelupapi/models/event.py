@@ -49,3 +49,16 @@ class Event(models.Model):
     date = models.DateField()
     time = models.TimeField()
     organizer = models.ForeignKey(Gamer, on_delete=models.CASCADE, related_name='event')
+
+# new code added here - delete if breaks:
+    # def get_joined_users(self):
+    #     return list(self.eventgamer_set.filter().values_list('gamer__bio', flat=True))
+
+    @property
+    def joined(self):
+        return self.__joined
+
+    @joined.setter
+    def joined(self, value):
+        self.__joined = value
+        

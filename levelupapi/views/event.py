@@ -302,8 +302,11 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
+from levelupapi.models import Event
+from levelupapi.models import Game
+from levelupapi.models import Gamer
 from rest_framework.decorators import action
-from levelupapi.models import Event, Game, Gamer, EventGamer
+from levelupapi.models import EventGamer
 
 class EventView(ViewSet):
     """Level up game view"""
@@ -314,13 +317,13 @@ class EventView(ViewSet):
         Returns:
             Response -- JSON serialized game type
         """
-
+        
         try:
-            event = Event.objects.get(pk=pk)
-            serializer = EventSerializer(event)
-            return Response(serializer.data)
+          event = Event.objects.get(pk=pk)
+          serializer = EventSerializer(event)
+          return Response(serializer.data)
         except Event.DoesNotExist as ex:
-            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+          return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
 
     def list(self, request):
@@ -329,10 +332,18 @@ class EventView(ViewSet):
         Returns:
             Response -- JSON serialized list of game types
         """
-        event = Event.objects.all()
-        serializer = EventSerializer(event, many=True)
-        return Response(serializer.data)
+        events = Event.objects.all()
+        uid = request.META['HTTP_AUTHORIZATION']
+        gamer = Gamer.objects.get(uid=uid)
 
+        for event in events:
+            # Check to see if there is a row in the Event Games table that has the passed in gamer and event
+            event.joined = len(EventGamer.objects.filter(
+                gamer=gamer, event=event)) > 0
+
+        serializer = EventSerializer(events, many=True)
+        return Response(serializer.data)
+    
     def create(self, request):
         """Handle POST operations
 
@@ -351,7 +362,7 @@ class EventView(ViewSet):
         )
         serializer = EventSerializer(event)
         return Response(serializer.data)
-
+    
     def update(self, request, pk):
         """Handle PUT requests for an event
 
@@ -366,37 +377,49 @@ class EventView(ViewSet):
 
         game = Game.objects.get(pk=request.data["game"])
         event.game = game
-
+        
         gamer = Gamer.objects.get(uid=request.data["organizer"])
         event.organizer = gamer
-
+        
         event.save()
 
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, pk):
-        """ DELETE """
         event = Event.objects.get(pk=pk)
         event.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+    
+    # original decorator for sign ups:
+    # @action(methods=['post'], detail=True)
+    # def signup(self, request, pk):
+    #     """Post request for a user to sign up for an event"""
 
+    # gamer = Gamer.objects.get(user=request.data["userId"])
+    # event = Event.objects.get(pk=pk)
+    # attendee = EventGamer.objects.create(
+    #     gamer=gamer,
+    #     event=event
+    # )
+    # return Response({'message': 'Gamer added'}, status=status.HTTP_201_CREATED)
+    
     @action(methods=['post'], detail=True)
     def signup(self, request, pk):
         """Post request for a user to sign up for an event"""
 
-        gamer = Gamer.objects.get(uid=request.data["user_id"])
+        gamer = Gamer.objects.get(uid=request.META['HTTP_AUTHORIZATION'])
         event = Event.objects.get(pk=pk)
-        attendee = EventGamer.objects.create(
+        EventGamer.objects.create(
             gamer=gamer,
             event=event
         )
         return Response({'message': 'Gamer added'}, status=status.HTTP_201_CREATED)
-
+    
     @action(methods=['delete'], detail=True)
     def leave(self, request, pk):
         """Delete request for a user to sign up for an event"""
 
-        gamer = Gamer.objects.get(uid=request.data["user_id"])
+        gamer = Gamer.objects.get(uid=request.META['HTTP_AUTHORIZATION'])
         event = Event.objects.get(pk=pk)
         attendee = EventGamer.objects.get(
             gamer=gamer,
@@ -408,7 +431,16 @@ class EventView(ViewSet):
 class EventSerializer(serializers.ModelSerializer):
     """JSON serializer for game types
     """
+    # added this code here to display joined users on client side:
+    # joined_users = serializers.SerializerMethodField()
+    
+    # add 'joined_users' to meta fields below if using FE code to display joined users on event cards
     class Meta:
         model = Event
-        fields = ('id', 'game', 'description', 'date', 'time', 'organizer')
+        fields = ('id', 'game', 'description', 'date', 'time', 'organizer', 'joined')
         depth = 2
+        
+        # added this code to display users who joined
+    # def get_joined_users(self, obj):
+    #     joined_users = EventGamer.objects.filter(event=obj).select_related('gamer').values('gamer')
+    #     return joined_users
