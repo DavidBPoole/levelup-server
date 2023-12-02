@@ -108,8 +108,8 @@ class EventView(ViewSet):
     def signup(self, request, pk):
         """Post request for a user to sign up for an event"""
 
-        # gamer = Gamer.objects.get(uid=request.META['HTTP_AUTHORIZATION'])
-        gamer = Gamer.objects.get(uid=request.data["userId"]) # line added for postman
+        gamer = Gamer.objects.get(uid=request.META['HTTP_AUTHORIZATION'])
+        # gamer = Gamer.objects.get(uid=request.data["userId"]) # line added for postman
         event = Event.objects.get(pk=pk)
         EventGamer.objects.create(
             gamer=gamer,
@@ -121,8 +121,8 @@ class EventView(ViewSet):
     def leave(self, request, pk):
         """Delete request for a user to sign up for an event"""
 
-        # gamer = Gamer.objects.get(uid=request.META['HTTP_AUTHORIZATION'])
-        gamer = Gamer.objects.get(uid=request.data["userId"]) # line added for postman
+        gamer = Gamer.objects.get(uid=request.META['HTTP_AUTHORIZATION'])
+        # gamer = Gamer.objects.get(uid=request.data["userId"]) # line added for postman
         event = Event.objects.get(pk=pk)
         attendee = EventGamer.objects.get(
             gamer=gamer,
@@ -136,5 +136,5 @@ class EventSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Event
-        fields = ('id', 'game', 'description', 'date', 'time', 'organizer', 'joined')
+        fields = ('id', 'game', 'organizer', 'description', 'date', 'time', 'joined')
         depth = 2
