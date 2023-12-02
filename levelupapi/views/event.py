@@ -431,16 +431,7 @@ class EventView(ViewSet):
 class EventSerializer(serializers.ModelSerializer):
     """JSON serializer for game types
     """
-    # added this code here to display joined users on client side:
-    # joined_users = serializers.SerializerMethodField()
-    
-    # add 'joined_users' to meta fields below if using FE code to display joined users on event cards
     class Meta:
         model = Event
         fields = ('id', 'game', 'description', 'date', 'time', 'organizer', 'joined')
         depth = 2
-        
-        # added this code to display users who joined
-    # def get_joined_users(self, obj):
-    #     joined_users = EventGamer.objects.filter(event=obj).select_related('gamer').values('gamer')
-    #     return joined_users
